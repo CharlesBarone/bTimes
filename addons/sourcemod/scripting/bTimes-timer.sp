@@ -1188,10 +1188,21 @@ public Action:SM_SetStyle(client, args)
 		if(Style_IsEnabled(Style) && g_StyleConfig[Style][AllowType][TIMER_MAIN])
 		{
 			GetStyleAbbr(Style, sStyle, sizeof(sStyle));
-			
-			if(StrEqual(sCommand, sStyle))
+
+			if(GetClientTeam(client) <= 1)	
+			{	
+				if(StrEqual(sCommand, sStyle))
+				{
+					ChangeClientTeam(client, GetRandomInt(2, 3));
+					SetStyle(client, TIMER_MAIN, Style);
+				}
+			}
+			else
 			{
-				SetStyle(client, TIMER_MAIN, Style);
+				if(StrEqual(sCommand, sStyle))
+				{
+					SetStyle(client, TIMER_MAIN, Style);
+				}
 			}
 		}
 	}
@@ -1211,10 +1222,21 @@ public Action:SM_SetBonusStyle(client, args)
 		if(Style_IsEnabled(Style) && g_StyleConfig[Style][AllowType][TIMER_BONUS])
 		{
 			GetStyleAbbr(Style, sStyle, sizeof(sStyle));
-			
-			if(StrEqual(sCommand, sStyle))
+
+			if(GetClientTeam(client) <= 1)	
+			{	
+				if(StrEqual(sCommand, sStyle))
+				{
+					ChangeClientTeam(client, GetRandomInt(2, 3));
+					SetStyle(client, TIMER_BONUS, Style);
+				}
+			}
+			else
 			{
-				SetStyle(client, TIMER_BONUS, Style);
+				if(StrEqual(sCommand, sStyle))
+				{
+					SetStyle(client, TIMER_BONUS, Style);
+				}
 			}
 		}
 	}
