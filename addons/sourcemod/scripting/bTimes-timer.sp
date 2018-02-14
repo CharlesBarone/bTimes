@@ -538,7 +538,6 @@ ReplaceMessage(String:message[], maxlength)
 	}
 	else if(g_GameType == GameType_CSGO)
 	{
-		ReplaceString(message, maxlength, "^A", "\x0A");
 		ReplaceString(message, maxlength, "^1", "\x01");
 		ReplaceString(message, maxlength, "^2", "\x02");
 		ReplaceString(message, maxlength, "^3", "\x03");
@@ -547,7 +546,14 @@ ReplaceMessage(String:message[], maxlength)
 		ReplaceString(message, maxlength, "^6", "\x06");
 		ReplaceString(message, maxlength, "^7", "\x07");
 		ReplaceString(message, maxlength, "^8", "\x08");
+		ReplaceString(message, maxlength, "^9", "\x09");
+		ReplaceString(message, maxlength, "^A", "\x0A");
 		ReplaceString(message, maxlength, "^B", "\x0B");
+		ReplaceString(message, maxlength, "^C", "\x0C");
+		ReplaceString(message, maxlength, "^D", "\x0D");
+		ReplaceString(message, maxlength, "^E", "\x0E");
+		ReplaceString(message, maxlength, "^F", "\x0F");
+		ReplaceString(message, maxlength, "^0", "\x10");
 	}
 }
 
