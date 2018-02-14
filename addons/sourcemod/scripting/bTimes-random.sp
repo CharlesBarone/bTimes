@@ -69,6 +69,7 @@ public OnPluginStart(){
 	g_WeaponDespawn    = CreateConVar("timer_weapondespawn", "1", "Kills weapons a second after spawning to prevent flooding server.", 0, true, 0.0, true, 1.0);
 	g_hNoDamage        = CreateConVar("timer_nodamage", "1", "Blocks all player damage when on", 0, true, 0.0, true, 1.0);
 	g_hAllowHide       = CreateConVar("timer_allowhide", "1", "Allows players to use the !hide command", 0, true, 0.0, true, 1.0);
+	g_HideChatTriggers = CreateConVar("timer_hidechatcmds", "1", "Hide any chat triggers", 0, true, 0.0, true, 1.0);
 	g_DisableRadio     = CreateConVar("timer_blockradio", "1", "Block radio commands", 0, true, 0.0, true, 1.0);
 
 	g_MessageStart     = CreateConVar("timer_msgstart", "^3^A^3[^4Timer^3] ^2- ", "Sets the start of all timer messages. (Always keep the ^A after the first color code)");
@@ -95,6 +96,8 @@ public OnPluginStart(){
 
 	// Command hooks
 	AddCommandListener(DropItem, "drop");
+	AddCommandListener(HookPlayerChat, "say");
+	AddCommandListener(HookPlayerChat, "say_team");
 	// hook radio commands instead of a global listener
 	for(int i = 0; i < sizeof(gS_RadioCommands); i++)
 	{
@@ -219,6 +222,18 @@ public Action Command_Radio(int client, const char[] command, int args)
 
 	return Plugin_Continue;
 }
+
+public Action:HookPlayerChat(int client, const String:command[], int args)
+{
+	if(GetConVarBool(g_HideChatTriggers))
+	{
+		decl String:text[2];
+		GetCmdArg(1, text, 2);
+		return text[0] == '!' || text[0] == '/' ? Plugin_Handled:Plugin_Continue;
+	}
+	return Plugin_Continue;
+}
+
 public OnClientDisconnect_Post(client)
 {
 	CheckHooks();
