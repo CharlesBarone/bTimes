@@ -1,0 +1,37 @@
+"Sounds"
+{
+	"World Record"
+	{
+		"1"
+		{
+			"Position" "1"
+			"Sound"    "male-holyshit.mp3"
+		}
+		"2"
+		{
+			"Position" "2"
+			"Sound"    "male-wickedsick.mp3"
+		}
+		"3"
+		{
+			"Position" "3"
+			"Sound"    "male-godlike.mp3"
+		}
+	}
+	
+	"Personal Record"
+	{
+		"1"
+		{
+			"Sound"    "improved.mp3"
+		}
+	}
+	
+	"No New Time"
+	{
+		"1"
+		{
+			"Sound"    "BUZZER.wav"
+		}
+	}
+}
