@@ -113,12 +113,12 @@ public OnStylesLoaded()
                 
                 Format(sCvar, sizeof(sCvar), "timer_ghosttag_%s%s", sTypeAbbr, sStyleAbbr);
                 Format(sDesc, sizeof(sDesc), "The replay bot's clan tag for the scoreboard (%s style on %s timer)", sStyle, sType);
-                Format(sValue, sizeof(sValue), "Ghost :: %s", sTypeStyleAbbr);
+                Format(sValue, sizeof(sValue), "Replay :: %s", sTypeStyleAbbr);
                 g_hGhostClanTag[Type][Style] = CreateConVar(sCvar, sValue, sDesc);
                 
                 Format(sCvar, sizeof(sCvar), "timer_ghostweapon_%s%s", sTypeAbbr, sStyleAbbr);
                 Format(sDesc, sizeof(sDesc), "The weapon the replay bot will always use (%s style on %s timer)", sStyle, sType);
-                g_hGhostWeapon[Type][Style] = CreateConVar(sCvar, "weapon_glock", sDesc, 0, true, 0.0, true, 1.0);
+                g_hGhostWeapon[Type][Style] = CreateConVar(sCvar, "weapon_usp_silencer", sDesc, 0, true, 0.0, true, 1.0);
                 
                 HookConVarChange(g_hGhostWeapon[Type][Style], OnGhostWeaponChanged);
                 
