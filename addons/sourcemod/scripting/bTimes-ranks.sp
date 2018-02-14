@@ -20,7 +20,7 @@ public Plugin myinfo =
 #include <bTimes-zones>
 
 #undef REQUIRE_PLUGIN
-#include <scp>
+#include <cp-scp-wrapper>
 //#include <colors>
 
 #define CC_HASCC 1<<0

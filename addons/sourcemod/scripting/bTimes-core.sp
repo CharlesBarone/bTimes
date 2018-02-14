@@ -14,7 +14,7 @@ public Plugin myinfo =
 
 #include <sourcemod>
 #include <sdktools>
-#include <scp>
+#include <cp-scp-wrapper>
 #include <smlib/clients>
 #include <bTimes-timer>
 
