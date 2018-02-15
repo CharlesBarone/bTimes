@@ -52,12 +52,14 @@ public OnPluginStart()
     SetConVar("sv_enablebunnyhopping", "1");
     SetConVar("sv_airaccelerate", "1000");
     SetConVar("sv_maxvelocity", "100000");
-    SetConVar("sv_friction", "4");
-    SetConVar("sv_accelerate", "5");
+    SetConVar("sv_friction", "4.2");
+    SetConVar("sv_accelerate", "5.5");
     SetConVar("sv_alltalk", "1");
     SetConVar("sv_hibernate_when_empty", "0");
     SetConVar("bot_quota_mode", "normal");
     SetConVar("bot_join_after_player", "0");
+    SetConVar("mp_ignore_round_win_conditions", "1");
+    SetConVar("mp_maxrounds", "1");
     
     HookEvent("server_cvar", OnCvarChange, EventHookMode_Pre);
 	
@@ -84,6 +86,8 @@ public OnConfigsExecuted()
     SetConVar("bot_join_after_player", "0");
     SetConVar("mp_autoteambalance", "0");
     SetConVar("mp_limitteams", "0");
+    SetConVar("mp_ignore_round_win_conditions", "1");
+    SetConVar("mp_maxrounds", "1");
 }
 
 public Action:OnPlayerDeath(Handle:hEvent, const String:strName[], bool:bBroadcast)
