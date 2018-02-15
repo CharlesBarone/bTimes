@@ -301,19 +301,19 @@ public Action:OnChatMessage(&author, Handle:recipients, String:name[], String:me
 
 FormatTag(client, String:buffer[], char[] temp, maxlength)
 {
-	ReplaceString(buffer, maxlength, "{team}", "\x03", true);
-	ReplaceString(buffer, maxlength, "{white}", "\x01", true);
-	ReplaceString(buffer, maxlength, "{red}", "\x02", true);
-	ReplaceString(buffer, maxlength, "{green}", "\x04", true);
-	ReplaceString(buffer, maxlength, "{lime}", "\x05", true);
-	ReplaceString(buffer, maxlength, "{lightgreen}", "\x06", true);
-	ReplaceString(buffer, maxlength, "{lightred}", "\x07", true);
-	ReplaceString(buffer, maxlength, "{gray}", "\x08", true);
-	ReplaceString(buffer, maxlength, "{yellow}", "\x09", true);
-	ReplaceString(buffer, maxlength, "{orange}", "\x10", true);
-	ReplaceString(buffer, maxlength, "{lightblue}", "\x0B", true);
-	ReplaceString(buffer, maxlength, "{blue}", "\x0C", true);
-	ReplaceString(buffer, maxlength, "{purple}", "\x0E", true);
+	ReplaceString(temp, maxlength, "{team}", "\x03", true);
+	ReplaceString(temp, maxlength, "{white}", "\x01", true);
+	ReplaceString(temp, maxlength, "{red}", "\x02", true);
+	ReplaceString(temp, maxlength, "{green}", "\x04", true);
+	ReplaceString(temp, maxlength, "{lime}", "\x05", true);
+	ReplaceString(temp, maxlength, "{lightgreen}", "\x06", true);
+	ReplaceString(temp, maxlength, "{lightred}", "\x07", true);
+	ReplaceString(temp, maxlength, "{gray}", "\x08", true);
+	ReplaceString(temp, maxlength, "{yellow}", "\x09", true);
+	ReplaceString(temp, maxlength, "{orange}", "\x10", true);
+	ReplaceString(temp, maxlength, "{lightblue}", "\x0B", true);
+	ReplaceString(temp, maxlength, "{blue}", "\x0C", true);
+	ReplaceString(temp, maxlength, "{purple}", "\x0E", true);
 
 	if(0 < client <= MaxClients)
 	{
@@ -1078,8 +1078,8 @@ public Action:SM_Colorhelp(client, args)
 	PrintToConsole(client, " {lightgreen} will be replaced with a LIGHTGREEN color.");
 	PrintToConsole(client, " {lightred} will be replaced with a LIGHTRED color.");
 	PrintToConsole(client, " {gray} will be replaced with a GRAY color.");
-	PrintToConsole(client, " {lightolive} will be replaced with a LIGHTOLIVE color.");
-	PrintToConsole(client, " {olive} will be replaced with a OLIVE color.");
+	PrintToConsole(client, " {yellow} will be replaced with a LIGHTOLIVE color.");
+	PrintToConsole(client, " {orange} will be replaced with a OLIVE color.");
 	PrintToConsole(client, " {lightblue} will be replaced with a LIGHTBLUE color.");
 	PrintToConsole(client, " {blue} will be replaced with a BLUE color.");
 	PrintToConsole(client, " {purple} will be replaced with PURPLE color.\n");
