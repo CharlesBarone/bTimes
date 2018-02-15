@@ -654,14 +654,14 @@ public Action:GhostCheck(Handle:timer, any:data)
                 // Check if ghost is dead
                 if(g_bReplayFileExists[0][0])
                 {
-                if(!IsPlayerAlive(g_Ghost[0][0]))
+                if(g_Ghost[0][0] && !IsPlayerAlive(g_Ghost[0][0]))
                     {
                         CS_RespawnPlayer(g_Ghost[0][0]);
                     }
                 }
                 else if(!g_bReplayFileExists[0][0])
                 {
-                    if(IsPlayerAlive(g_Ghost[0][0]))
+                    if(g_Ghost[0][0] && IsPlayerAlive(g_Ghost[0][0]))
                     {
                         FakeClientCommand(g_Ghost[0][0], "kill");
                     }
@@ -670,14 +670,14 @@ public Action:GhostCheck(Handle:timer, any:data)
                 // Check if ghost is dead
                 if(g_bReplayFileExists[1][0])
                 {
-                if(!IsPlayerAlive(g_Ghost[0][2]))
+                if(g_Ghost[0][2] && !IsPlayerAlive(g_Ghost[0][2]))
                     {
                         CS_RespawnPlayer(g_Ghost[0][2]);
                     }
                 }
                 else if(!g_bReplayFileExists[1][0])
                 {
-                    if(IsPlayerAlive(g_Ghost[0][2]))
+                    if(g_Ghost[0][2] && IsPlayerAlive(g_Ghost[0][2]))
                     {
                         FakeClientCommand(g_Ghost[0][2], "kill");
                     }
