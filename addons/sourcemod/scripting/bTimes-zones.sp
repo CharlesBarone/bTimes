@@ -100,7 +100,7 @@ public OnPluginStart()
 	DB_Connect();
 
 	// Cvars
-	g_hZoneStyle[MAIN_START]    = CreateConVar("timer_mainstart_zonestyle", "0.0", "Set the main start zone drawing style. 0.0 = 2D, 1.0 = 3D", 0, true, 0.0, true, 1.0);
+	g_hZoneStyle[MAIN_START]    = CreateConVar("timer_mainstart_zonestyle", "1.0", "Set the main start zone drawing style. 0.0 = 2D, 1.0 = 3D", 0, true, 0.0, true, 1.0);
 	g_hZoneStyle[MAIN_END]      = CreateConVar("timer_mainend_zonestyle", "1.0", "Set the main start zone drawing style. 0.0 = 2D, 1.0 = 3D", 0, true, 0.0, true, 1.0);
 	g_hZoneStyle[BONUS_START]   = CreateConVar("timer_bonusstart_zonestyle", "1.0", "Set the main start zone drawing style. 0.0 = 2D, 1.0 = 3D", 0, true, 0.0, true, 1.0);
 	g_hZoneStyle[BONUS_END]     = CreateConVar("timer_bonusend_zonestyle", "1.0", "Set the main start zone drawing style. 0.0 = 2D, 1.0 = 3D", 0, true, 0.0, true, 1.0);
