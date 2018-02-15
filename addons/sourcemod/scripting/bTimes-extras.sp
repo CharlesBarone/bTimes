@@ -82,6 +82,8 @@ public OnConfigsExecuted()
     SetConVar("sv_hibernate_when_empty", "0");
     SetConVar("bot_quota_mode", "normal");
     SetConVar("bot_join_after_player", "0");
+    SetConVar("mp_autoteambalance", "0");
+    SetConVar("mp_limitteams", "0");
 }
 
 public Action:OnPlayerDeath(Handle:hEvent, const String:strName[], bool:bBroadcast)
