@@ -188,10 +188,19 @@ public OnMapStart()
     // Get map name to use the database
     GetCurrentMap(g_sMapName, sizeof(g_sMapName));
     
+    decl String:sOldPath[PLATFORM_MAX_PATH];
+    BuildPath(Path_SM, sOldPath, sizeof(sOldPath), "data/btimes");
+	
     // Check path to folder that holds all the ghost data
     decl String:sPath[PLATFORM_MAX_PATH];
     BuildPath(Path_SM, sPath, sizeof(sPath), "data/Timer");
-    if(!DirExists(sPath))
+	
+	if(DirExists(sOldPath))
+    {
+		// Rename old folder for easy migration from the leaked 1.8.3
+        RenameFile(sPath, sOldPath);
+    }
+    else if(!DirExists(sPath))
     {
         // Create ghost data directory if it doesn't exist
         CreateDirectory(sPath, 511);
