@@ -2533,6 +2533,7 @@ CheckPrespeed(client, Style)
 {	
 	if(g_StyleConfig[Style][PreSpeed] != 0.0)
 	{
+		/*
 		new Float:fVel = GetClientVelocity(client, true, true, true);
 		
 		if(fVel > g_StyleConfig[Style][PreSpeed])
@@ -2542,6 +2543,28 @@ CheckPrespeed(client, Style)
 			ScaleVector(vVel, g_StyleConfig[Style][SlowedSpeed]/fVel);
 			TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, vVel);
 		}
+		*/
+		
+		float CurVelVec[3];
+		GetEntPropVector(client, Prop_Data, "m_vecVelocity", CurVelVec);
+	
+		if (CurVelVec[0] == 0.0)
+			CurVelVec[0] = 1.0;
+		if (CurVelVec[1] == 0.0)
+			CurVelVec[1] = 1.0;
+		if (CurVelVec[2] == 0.0)
+			CurVelVec[2] = 1.0;
+		
+		float currentspeed = SquareRoot(Pow(CurVelVec[0], 2.0) + Pow(CurVelVec[1], 2.0));
+		
+		if (currentspeed > g_StyleConfig[Style][PreSpeed])
+		{
+			NormalizeVector(CurVelVec, CurVelVec);
+			ScaleVector(CurVelVec, g_StyleConfig[Style][PreSpeed]);
+			TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, CurVelVec);
+		}
+		
+		
 	}
 }
 
