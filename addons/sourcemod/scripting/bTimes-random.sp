@@ -43,7 +43,8 @@ new 	g_iNumSounds;
 new 	Handle:g_hAllowKnifeDrop,
 	Handle:g_WeaponDespawn,
 	Handle:g_hNoDamage,
-	Handle:g_hAllowHide;
+	Handle:g_hAllowHide,
+	Handle:g_HideChatTriggers,
 	Handle:g_DisableRadio;
 
 new	Handle:g_MessageStart,
