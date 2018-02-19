@@ -3407,7 +3407,12 @@ public Native_GetButtons(Handle:plugin, numParams)
 
 public Native_IsTAS(Handle:plugin, numParams)
 {
-	return g_bTAS[GetNativeCell(1)];
+	int client = GetNativeCell(1);
+	if(0 < client <= MaxClients)
+	{
+		return g_bTAS[client];
+	}
+	return false;
 }
 
 // Adds or updates a player's record on the map
