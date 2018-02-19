@@ -954,9 +954,9 @@ public Action:SM_ColoredName(int client, int args)
 				decl String:sEscapeArg[(strlen(sArg)*2)+1];
 				
 				// Escape the ccname for SQL insertion
-				SQL_LockDatabase(g_DB);
+				//SQL_LockDatabase(g_DB);
 				SQL_EscapeString(g_DB, sArg, sEscapeArg, (strlen(sArg)*2)+1);
-				SQL_UnlockDatabase(g_DB);
+				//SQL_UnlockDatabase(g_DB);
 				
 				// Modify player's ccname
 				new idx = FindStringInArray(g_hCustomSteams, sAuth);
@@ -1029,9 +1029,9 @@ public Action:SM_ColoredMsg(client, args)
 				GetCmdArgString(sArg, sizeof(sArg));
 				decl String:sEscapeArg[(strlen(sArg)*2)+1];
 				
-				SQL_LockDatabase(g_DB);
+				//SQL_LockDatabase(g_DB);
 				SQL_EscapeString(g_DB, sArg, sEscapeArg, (strlen(sArg)*2)+1);
-				SQL_UnlockDatabase(g_DB);
+				//SQL_UnlockDatabase(g_DB);
 					
 				new idx = FindStringInArray(g_hCustomSteams, sAuth);
 				

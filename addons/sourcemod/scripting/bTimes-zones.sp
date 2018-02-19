@@ -1418,7 +1418,7 @@ public LoadZones_Callback2(Handle:owner, Handle:hndl, String:error[], any:data)
 			
 			GetMapNameFromMapId(MapID, sMapName, sizeof(sMapName));
 			
-			if(FindStringInArray(g_MapList, sMapName) != -1)
+			if(g_MapList != INVALID_HANDLE && FindStringInArray(g_MapList, sMapName) != -1)
 			{
 				g_TotalZoneAllMaps[SQL_FetchInt(hndl, 1)]++;
 			}

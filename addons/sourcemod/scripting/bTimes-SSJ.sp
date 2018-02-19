@@ -403,7 +403,7 @@ public void Player_Jump(Event event, const char[] name, bool dB)
 		}
 	}
 
-	if(gI_SSJJumps[client] == gI_SSJSetting_jumpprint[client] || (gI_SSJSettings[client] & SSJ_RPT && gI_SSJJumps[client] % gI_SSJSetting_jumpprint[client] == 0))
+	if(gI_SSJJumps[client] == gI_SSJSetting_jumpprint[client] || (gI_SSJSettings[client] & SSJ_RPT && gI_SSJSetting_jumpprint[client] > 0 && gI_SSJJumps[client] % gI_SSJSetting_jumpprint[client] == 0))
 	{
 		new Float:gain = g_flRawGain[client];
 		gain /= g_strafeTick[client];
