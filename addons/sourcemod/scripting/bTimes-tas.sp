@@ -571,7 +571,7 @@ public Panel_Handler(Handle:menu, MenuAction:action, param1, param2)
 {
 	if(action == MenuAction_Select)
 	{
-		if(!Timer_IsTAS(client))
+		if(!Timer_IsTAS(param1))
 		{
 			gb_TASMenu[param1] = false;
 			return;
