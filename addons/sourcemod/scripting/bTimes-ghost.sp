@@ -113,12 +113,12 @@ public OnStylesLoaded()
                 
                 Format(sCvar, sizeof(sCvar), "timer_ghosttag_%s%s", sTypeAbbr, sStyleAbbr);
                 Format(sDesc, sizeof(sDesc), "The replay bot's clan tag for the scoreboard (%s style on %s timer)", sStyle, sType);
-                Format(sValue, sizeof(sValue), "Ghost :: %s", sTypeStyleAbbr);
+                Format(sValue, sizeof(sValue), "Replay :: %s", sTypeStyleAbbr);
                 g_hGhostClanTag[Type][Style] = CreateConVar(sCvar, sValue, sDesc);
                 
                 Format(sCvar, sizeof(sCvar), "timer_ghostweapon_%s%s", sTypeAbbr, sStyleAbbr);
                 Format(sDesc, sizeof(sDesc), "The weapon the replay bot will always use (%s style on %s timer)", sStyle, sType);
-                g_hGhostWeapon[Type][Style] = CreateConVar(sCvar, "weapon_glock", sDesc, 0, true, 0.0, true, 1.0);
+                g_hGhostWeapon[Type][Style] = CreateConVar(sCvar, "weapon_usp_silencer", sDesc, 0, true, 0.0, true, 1.0);
                 
                 HookConVarChange(g_hGhostWeapon[Type][Style], OnGhostWeaponChanged);
                 
@@ -188,10 +188,19 @@ public OnMapStart()
     // Get map name to use the database
     GetCurrentMap(g_sMapName, sizeof(g_sMapName));
     
+    decl String:sOldPath[PLATFORM_MAX_PATH];
+    BuildPath(Path_SM, sOldPath, sizeof(sOldPath), "data/btimes");
+	
     // Check path to folder that holds all the ghost data
     decl String:sPath[PLATFORM_MAX_PATH];
     BuildPath(Path_SM, sPath, sizeof(sPath), "data/Timer");
-    if(!DirExists(sPath))
+	
+	if(DirExists(sOldPath))
+    {
+		// Rename old folder for easy migration from the leaked 1.8.3
+        RenameFile(sPath, sOldPath);
+    }
+    else if(!DirExists(sPath))
     {
         // Create ghost data directory if it doesn't exist
         CreateDirectory(sPath, 511);

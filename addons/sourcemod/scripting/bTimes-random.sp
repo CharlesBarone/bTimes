@@ -43,7 +43,9 @@ new 	g_iNumSounds;
 new 	Handle:g_hAllowKnifeDrop,
 	Handle:g_WeaponDespawn,
 	Handle:g_hNoDamage,
-	Handle:g_hAllowHide;
+	Handle:g_hAllowHide,
+	Handle:g_HideChatTriggers,
+	Handle:g_DisableRadio;
 
 new	Handle:g_MessageStart,
 	Handle:g_MessageVar,
@@ -56,6 +58,11 @@ new 	String:g_msg_textcol[128] = {"\x01"};
 
 //new bool:g_TimerGunJump;
 
+// block radio
+char gS_RadioCommands[][] = {"coverme", "takepoint", "holdpos", "regroup", "followme", "takingfire", "go", "fallback", "sticktog",
+	"getinpos", "stormfront", "report", "roger", "enemyspot", "needbackup", "sectorclear", "inposition", "reportingin",
+	"getout", "negative", "enemydown", "compliment", "thanks", "cheer"};
+
 public OnPluginStart(){
 
 	// Server settings
@@ -63,6 +70,8 @@ public OnPluginStart(){
 	g_WeaponDespawn    = CreateConVar("timer_weapondespawn", "1", "Kills weapons a second after spawning to prevent flooding server.", 0, true, 0.0, true, 1.0);
 	g_hNoDamage        = CreateConVar("timer_nodamage", "1", "Blocks all player damage when on", 0, true, 0.0, true, 1.0);
 	g_hAllowHide       = CreateConVar("timer_allowhide", "1", "Allows players to use the !hide command", 0, true, 0.0, true, 1.0);
+	g_HideChatTriggers = CreateConVar("timer_hidechatcmds", "1", "Hide any chat triggers", 0, true, 0.0, true, 1.0);
+	g_DisableRadio     = CreateConVar("timer_blockradio", "1", "Block radio commands", 0, true, 0.0, true, 1.0);
 
 	g_MessageStart     = CreateConVar("timer_msgstart", "^3^A^3[^4Timer^3] ^2- ", "Sets the start of all timer messages. (Always keep the ^A after the first color code)");
 	g_MessageVar       = CreateConVar("timer_msgvar", "^4", "Sets the color of variables in timer messages such as player names.");
@@ -88,6 +97,13 @@ public OnPluginStart(){
 
 	// Command hooks
 	AddCommandListener(DropItem, "drop");
+	AddCommandListener(HookPlayerChat, "say");
+	AddCommandListener(HookPlayerChat, "say_team");
+	// hook radio commands instead of a global listener
+	for(int i = 0; i < sizeof(gS_RadioCommands); i++)
+	{
+		AddCommandListener(Command_Radio, gS_RadioCommands[i]);
+	}
 
 	// Player commands
 	RegConsoleCmdEx("sm_hide", SM_Hide, "Toggles hide");
@@ -198,6 +214,27 @@ public OnAllowHideChanged(Handle:convar, const String:oldValue[], const String:n
 	}
 }
 
+public Action Command_Radio(int client, const char[] command, int args)
+{
+	if(GetConVarBool(g_DisableRadio))
+	{
+		return Plugin_Handled;
+	}
+
+	return Plugin_Continue;
+}
+
+public Action:HookPlayerChat(int client, const String:command[], int args)
+{
+	if(GetConVarBool(g_HideChatTriggers))
+	{
+		decl String:text[2];
+		GetCmdArg(1, text, 2);
+		return text[0] == '!' || text[0] == '/' ? Plugin_Handled:Plugin_Continue;
+	}
+	return Plugin_Continue;
+}
+
 public OnClientDisconnect_Post(client)
 {
 	CheckHooks();
@@ -268,7 +305,6 @@ public OnTimerChatChanged(MessageType, String:Message[])
 
 ReplaceMessage(String:message[], maxlength)
 {
-	ReplaceString(message, maxlength, "^A", "\x0A");
 	ReplaceString(message, maxlength, "^1", "\x01");
 	ReplaceString(message, maxlength, "^2", "\x02");
 	ReplaceString(message, maxlength, "^3", "\x03");
@@ -277,7 +313,13 @@ ReplaceMessage(String:message[], maxlength)
 	ReplaceString(message, maxlength, "^6", "\x06");
 	ReplaceString(message, maxlength, "^7", "\x07");
 	ReplaceString(message, maxlength, "^8", "\x08");
+	ReplaceString(message, maxlength, "^9", "\x09");
+	ReplaceString(message, maxlength, "^A", "\x0A");
 	ReplaceString(message, maxlength, "^B", "\x0B");
+	ReplaceString(message, maxlength, "^C", "\x0C");
+	ReplaceString(message, maxlength, "^D", "\x0D");
+	ReplaceString(message, maxlength, "^E", "\x0E");
+	ReplaceString(message, maxlength, "^F", "\x0F");
 }
 
 public OnMessageStartChanged(Handle:convar, const String:oldValue[], const String:newValue[])
@@ -367,7 +409,7 @@ public Action:CSS_Hook_ShotgunShot(const String:te_name[], const Players[], numC
 	TE_WriteVector("m_vecOrigin", vTemp);
 	TE_WriteFloat("m_vecAngles[0]", TE_ReadFloat("m_vecAngles[0]"));
 	TE_WriteFloat("m_vecAngles[1]", TE_ReadFloat("m_vecAngles[1]"));
-	TE_WriteNum("m_iWeaponID", TE_ReadNum("m_iWeaponID"));
+	TE_WriteNum("m_weapon", TE_ReadNum("m_weapon"));
 	TE_WriteNum("m_iMode", TE_ReadNum("m_iMode"));
 	TE_WriteNum("m_iSeed", TE_ReadNum("m_iSeed"));
 	TE_WriteNum("m_iPlayer", TE_ReadNum("m_iPlayer"));

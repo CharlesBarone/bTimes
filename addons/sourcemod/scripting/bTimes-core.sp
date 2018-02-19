@@ -14,7 +14,7 @@ public Plugin myinfo =
 
 #include <sourcemod>
 #include <sdktools>
-#include <scp>
+#include <cp-scp-wrapper>
 #include <smlib/clients>
 #include <bTimes-timer>
 
@@ -87,6 +87,7 @@ public OnPluginStart()
 	// Events
 	HookEvent("player_changename", Event_PlayerChangeName, EventHookMode_Pre);
 	HookEvent("player_team", Event_PlayerTeam_Post, EventHookMode_Post);
+	HookEvent("round_start", Event_RoundStart, EventHookMode_Post);
 	
 	// Commands
 	RegConsoleCmdEx("sm_mostplayed", SM_TopMaps, "Displays the most played maps");
@@ -132,12 +133,19 @@ public OnMapStart()
 	
 	// Creates map if it doesn't exist, sets map as recently played, and loads map playtime
 	CreateCurrentMapID();
+	
+	SetConVarInt(FindConVar("sv_full_alltalk"), 1, false, false);
 }
 
 public OnMapEnd()
 {
 	DB_SaveMapPlaytime();
 	DB_SetMapLastPlayed();
+}
+
+public void Event_RoundStart(Handle event, char[] name, bool dontBroadcast)
+{
+	SetConVarInt(FindConVar("sv_full_alltalk"), 1, false, false);
 }
 
 public OnClientPutInServer(client)
@@ -192,7 +200,6 @@ ReplaceMessage(String:message[], maxlength)
 	}
 	else if(g_GameType == GameType_CSGO)
 	{
-		ReplaceString(message, maxlength, "^A", "\x0A");
 		ReplaceString(message, maxlength, "^1", "\x01");
 		ReplaceString(message, maxlength, "^2", "\x02");
 		ReplaceString(message, maxlength, "^3", "\x03");
@@ -201,7 +208,14 @@ ReplaceMessage(String:message[], maxlength)
 		ReplaceString(message, maxlength, "^6", "\x06");
 		ReplaceString(message, maxlength, "^7", "\x07");
 		ReplaceString(message, maxlength, "^8", "\x08");
+		ReplaceString(message, maxlength, "^9", "\x09");
+		ReplaceString(message, maxlength, "^A", "\x0A");
 		ReplaceString(message, maxlength, "^B", "\x0B");
+		ReplaceString(message, maxlength, "^C", "\x0C");
+		ReplaceString(message, maxlength, "^D", "\x0D");
+		ReplaceString(message, maxlength, "^E", "\x0E");
+		ReplaceString(message, maxlength, "^F", "\x0F");
+		ReplaceString(message, maxlength, "^0", "\x10");
 	}
 }
 

@@ -255,6 +255,10 @@ stock PrintColorTextAll(const String:msg[], any:...)
 {
 	decl String:buffer[300];
 	VFormat(buffer, sizeof(buffer), msg, 2);
+	
+	PrintToChatAll(buffer);
+	
+	/*
 	new Handle:hMessage = StartMessageAll("SayText2"); 
 	if (hMessage != INVALID_HANDLE) 
 	{
@@ -277,6 +281,7 @@ stock PrintColorTextAll(const String:msg[], any:...)
 		
 		EndMessage();
 	}
+	*/
 }
 
 /*
@@ -289,6 +294,9 @@ stock PrintColorText(client, const String:msg[], any:...)
 		new String:buffer[300];
 		VFormat(buffer, sizeof(buffer), msg, 3);
 		
+		PrintToChat(client, buffer);
+		
+		/*
 		new Handle:hMessage = StartMessageOne("SayText2", client); 
 		if (hMessage != INVALID_HANDLE) 
 		{ 
@@ -311,6 +319,8 @@ stock PrintColorText(client, const String:msg[], any:...)
 			
 			EndMessage();
 		}
+		*/
+		
 	}
 }
 
@@ -341,6 +351,12 @@ stock PrintColorTextObservers(target, const String:msg[], any:...)
 	if(observercount == 0)
 		return;
 	
+	for(int i = 0; i < observercount; i++)
+	{
+		PrintToChat(clients[i], buffer);
+	}
+	
+	/*
 	new Handle:hMessage = StartMessage("SayText2", clients, observercount); 
 	if (hMessage != INVALID_HANDLE) 
 	{ 
@@ -363,6 +379,7 @@ stock PrintColorTextObservers(target, const String:msg[], any:...)
 		
 		EndMessage();
 	}
+	*/
 }
 
 /*

@@ -124,12 +124,12 @@ public OnStylesLoaded()
                 
                 Format(sCvar, sizeof(sCvar), "timer_ghosttag_%s%s", sTypeAbbr, sStyleAbbr);
                 Format(sDesc, sizeof(sDesc), "The replay bot's clan tag for the scoreboard (%s style on %s timer)", sStyle, sType);
-                Format(sValue, sizeof(sValue), "Ghost :: %s", sTypeStyleAbbr);
+                Format(sValue, sizeof(sValue), "Replay :: %s", sTypeStyleAbbr);
                 g_hGhostClanTag[Type][Style] = CreateConVar(sCvar, sValue, sDesc);
                 
                 Format(sCvar, sizeof(sCvar), "timer_ghostweapon_%s%s", sTypeAbbr, sStyleAbbr);
                 Format(sDesc, sizeof(sDesc), "The weapon the replay bot will always use (%s style on %s timer)", sStyle, sType);
-                g_hGhostWeapon[Type][Style] = CreateConVar(sCvar, "weapon_glock", sDesc, 0, true, 0.0, true, 1.0);
+                g_hGhostWeapon[Type][Style] = CreateConVar(sCvar, "weapon_usp_silencer", sDesc, 0, true, 0.0, true, 1.0);
                 
                 HookConVarChange(g_hGhostWeapon[Type][Style], OnGhostWeaponChanged);
                 
@@ -206,10 +206,19 @@ public OnMapStart()
     // Get map name to use the database
     GetCurrentMap(g_sMapName, sizeof(g_sMapName));
     
+    decl String:sOldPath[PLATFORM_MAX_PATH];
+    BuildPath(Path_SM, sOldPath, sizeof(sOldPath), "data/btimes");
+	
     // Check path to folder that holds all the ghost data
     decl String:sPath[PLATFORM_MAX_PATH];
-    BuildPath(Path_SM, sPath, sizeof(sPath), "data/bTimes");
-    if(!DirExists(sPath))
+    BuildPath(Path_SM, sPath, sizeof(sPath), "data/Timer");
+	
+	if(DirExists(sOldPath))
+    {
+		// Rename old folder for easy migration from the leaked 1.8.3
+        RenameFile(sPath, sOldPath);
+    }
+    else if(!DirExists(sPath))
     {
         // Create ghost data directory if it doesn't exist
         CreateDirectory(sPath, 511);
@@ -645,14 +654,14 @@ public Action:GhostCheck(Handle:timer, any:data)
                 // Check if ghost is dead
                 if(g_bReplayFileExists[0][0])
                 {
-                if(!IsPlayerAlive(g_Ghost[0][0]))
+                if(g_Ghost[0][0] && !IsPlayerAlive(g_Ghost[0][0]))
                     {
                         CS_RespawnPlayer(g_Ghost[0][0]);
                     }
                 }
                 else if(!g_bReplayFileExists[0][0])
                 {
-                    if(IsPlayerAlive(g_Ghost[0][0]))
+                    if(g_Ghost[0][0] && IsPlayerAlive(g_Ghost[0][0]))
                     {
                         FakeClientCommand(g_Ghost[0][0], "kill");
                     }
@@ -661,14 +670,14 @@ public Action:GhostCheck(Handle:timer, any:data)
                 // Check if ghost is dead
                 if(g_bReplayFileExists[1][0])
                 {
-                if(!IsPlayerAlive(g_Ghost[0][2]))
+                if(g_Ghost[0][2] && !IsPlayerAlive(g_Ghost[0][2]))
                     {
                         CS_RespawnPlayer(g_Ghost[0][2]);
                     }
                 }
                 else if(!g_bReplayFileExists[1][0])
                 {
-                    if(IsPlayerAlive(g_Ghost[0][2]))
+                    if(g_Ghost[0][2] && IsPlayerAlive(g_Ghost[0][2]))
                     {
                         FakeClientCommand(g_Ghost[0][2], "kill");
                     }
@@ -800,7 +809,7 @@ CalculateBotQuota()
 	
 	
 	if (iBotQuota != g_iBotQuota)
-		ServerCommand("bot_qouta %d", g_iBotQuota);
+		ServerCommand("bot_quota %d", g_iBotQuota);
 		
 	CloseHandle(hBotQuota);
 }
@@ -809,11 +818,11 @@ LoadGhost()
 {
     // Rename old version files
     decl String:sPath[PLATFORM_MAX_PATH];
-    BuildPath(Path_SM, sPath, sizeof(sPath), "data/bTimes/%s.rec", g_sMapName);
+    BuildPath(Path_SM, sPath, sizeof(sPath), "data/Timer/%s.rec", g_sMapName);
     if(FileExists(sPath))
     {
         decl String:sPathTwo[PLATFORM_MAX_PATH];
-        BuildPath(Path_SM, sPathTwo, sizeof(sPathTwo), "data/bTimes/%s_0_0.rec", g_sMapName);
+        BuildPath(Path_SM, sPathTwo, sizeof(sPathTwo), "data/Timer/%s_0_0.rec", g_sMapName);
         RenameFile(sPathTwo, sPath);
     }
     
@@ -826,7 +835,7 @@ LoadGhost()
                 g_fGhostTime[Type][Style]    = 0.0;
                 g_GhostPlayerID[Type][Style] = 0;
                 
-                BuildPath(Path_SM, sPath, sizeof(sPath), "data/bTimes/%s_%d_%d.rec", g_sMapName, Type, Style);
+                BuildPath(Path_SM, sPath, sizeof(sPath), "data/Timer/%s_%d_%d.rec", g_sMapName, Type, Style);
                 
                 if(FileExists(sPath))
                 {
@@ -962,7 +971,7 @@ SaveGhost(client, Float:Time, Type, Style)
     
     // Delete existing ghost for the map
     decl String:sPath[PLATFORM_MAX_PATH];
-    BuildPath(Path_SM, sPath, sizeof(sPath), "data/bTimes/%s_%d_%d.rec", g_sMapName, Type, Style);
+    BuildPath(Path_SM, sPath, sizeof(sPath), "data/Timer/%s_%d_%d.rec", g_sMapName, Type, Style);
     if(FileExists(sPath))
     {
         DeleteFile(sPath);
@@ -1050,7 +1059,7 @@ DeleteGhost(Type, Style)
 {
     // delete map ghost file
     decl String:sPath[PLATFORM_MAX_PATH];
-    BuildPath(Path_SM, sPath, sizeof(sPath), "data/bTimes/%s_%d_%d.rec", g_sMapName, Type, Style);
+    BuildPath(Path_SM, sPath, sizeof(sPath), "data/Timer/%s_%d_%d.rec", g_sMapName, Type, Style);
     if(FileExists(sPath))
         DeleteFile(sPath);
     

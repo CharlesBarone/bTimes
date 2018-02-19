@@ -20,7 +20,7 @@ public Plugin myinfo =
 #include <bTimes-zones>
 
 #undef REQUIRE_PLUGIN
-#include <scp>
+#include <cp-scp-wrapper>
 //#include <colors>
 
 #define CC_HASCC 1<<0
@@ -299,27 +299,28 @@ public Action:OnChatMessage(&author, Handle:recipients, String:name[], String:me
 	return Plugin_Changed;
 }
 
-FormatTag(client, String:buffer[], maxlength)
+FormatTag(client, String:buffer[], char[] temp, maxlength)
 {
-	ReplaceString(buffer, maxlength, "{team}", "\x03", true);
-	ReplaceString(buffer, maxlength, "{white}", "\x01", true);
-	ReplaceString(buffer, maxlength, "{red}", "\x02", true);
-	ReplaceString(buffer, maxlength, "{green}", "\x04", true);
-	ReplaceString(buffer, maxlength, "{lime}", "\x05", true);
-	ReplaceString(buffer, maxlength, "{lightgreen}", "\x06", true);
-	ReplaceString(buffer, maxlength, "{lightred}", "\x07", true);
-	ReplaceString(buffer, maxlength, "{gray}", "\x08", true);
-	ReplaceString(buffer, maxlength, "{yellow}", "\x09", true);
-	ReplaceString(buffer, maxlength, "{orange}", "\x10", true);
-	ReplaceString(buffer, maxlength, "{lightblue}", "\x0B", true);
-	ReplaceString(buffer, maxlength, "{blue}", "\x0C", true);
-	ReplaceString(buffer, maxlength, "{purple}", "\x0E", true);
+	ReplaceString(temp, maxlength, "{team}", "\x03", true);
+	ReplaceString(temp, maxlength, "{white}", "\x01", true);
+	ReplaceString(temp, maxlength, "{red}", "\x02", true);
+	ReplaceString(temp, maxlength, "{green}", "\x04", true);
+	ReplaceString(temp, maxlength, "{lime}", "\x05", true);
+	ReplaceString(temp, maxlength, "{lightgreen}", "\x06", true);
+	ReplaceString(temp, maxlength, "{lightred}", "\x07", true);
+	ReplaceString(temp, maxlength, "{gray}", "\x08", true);
+	ReplaceString(temp, maxlength, "{yellow}", "\x09", true);
+	ReplaceString(temp, maxlength, "{orange}", "\x10", true);
+	ReplaceString(temp, maxlength, "{lightblue}", "\x0B", true);
+	ReplaceString(temp, maxlength, "{blue}", "\x0C", true);
+	ReplaceString(temp, maxlength, "{purple}", "\x0E", true);
 
 	if(0 < client <= MaxClients)
 	{
 		decl String:sName[MAX_NAME_LENGTH];
 		GetClientName(client, sName, sizeof(sName));
-		ReplaceString(buffer, maxlength, "{name}", sName, true);
+		ReplaceString(temp, maxlength, "{name}", sName, true);
+		ReplaceString(buffer, maxlength, sName, temp, true);
 	}
 
 	ReplaceString(buffer, maxlength, "{start}", " \x01\x0B", true);
@@ -335,8 +336,9 @@ GetChatName(client, String:buffer[], maxlength)
 		new idx = FindStringInArray(g_hCustomSteams, sAuth);
 		if(idx != -1)
 		{
-			GetArrayString(g_hCustomNames, idx, buffer, maxlength);
-			FormatTag(client, buffer, maxlength);
+			char temp[MAXLENGTH_NAME];
+			GetArrayString(g_hCustomNames, idx, temp, sizeof(temp));
+			FormatTag(client, buffer, temp, maxlength);
 		}
 	}
 	else if(GetConVarBool(g_hUseChatRanks))
@@ -346,8 +348,9 @@ GetChatName(client, String:buffer[], maxlength)
 		{
 			if(GetArrayCell(g_hChatRanksRanges, i, 0) <= g_Rank[client][TIMER_MAIN][0] <= GetArrayCell(g_hChatRanksRanges, i, 1))
 			{
-				GetArrayString(g_hChatRanksNames, i, buffer, maxlength);
-				FormatTag(client, buffer, maxlength);
+				char temp[MAXLENGTH_NAME];
+				GetArrayString(g_hChatRanksNames, i, temp, sizeof(temp));
+				FormatTag(client, buffer, temp, maxlength);
 				return;
 			}
 		}
@@ -366,7 +369,7 @@ GetChatMessage(client, String:message[], maxlength)
 		{
 			decl String:buffer[MAXLENGTH_MESSAGE];
 			GetArrayString(g_hCustomMessages, idx, buffer, MAXLENGTH_MESSAGE);
-			FormatTag(client, buffer, maxlength);
+			FormatTag(client, "", buffer, maxlength);
 			Format(message, maxlength, "%s%s", buffer, message);
 		}
 	}
@@ -1075,8 +1078,8 @@ public Action:SM_Colorhelp(client, args)
 	PrintToConsole(client, " {lightgreen} will be replaced with a LIGHTGREEN color.");
 	PrintToConsole(client, " {lightred} will be replaced with a LIGHTRED color.");
 	PrintToConsole(client, " {gray} will be replaced with a GRAY color.");
-	PrintToConsole(client, " {lightolive} will be replaced with a LIGHTOLIVE color.");
-	PrintToConsole(client, " {olive} will be replaced with a OLIVE color.");
+	PrintToConsole(client, " {yellow} will be replaced with a LIGHTOLIVE color.");
+	PrintToConsole(client, " {orange} will be replaced with a OLIVE color.");
 	PrintToConsole(client, " {lightblue} will be replaced with a LIGHTBLUE color.");
 	PrintToConsole(client, " {blue} will be replaced with a BLUE color.");
 	PrintToConsole(client, " {purple} will be replaced with PURPLE color.\n");
@@ -1461,7 +1464,7 @@ public Action:SM_Rankings(client, args)
 	for(new i=0; i<iSize; i++)
 	{
 		GetArrayString(g_hChatRanksNames, i, sChatRank, MAXLENGTH_NAME);
-		FormatTag(client, sChatRank, MAXLENGTH_NAME);
+		FormatTag(client, "", sChatRank, MAXLENGTH_NAME);
 		
 		PrintColorText(client, " %s%5d %s-%s%5d%s: %s",
 			g_msg_varcol,

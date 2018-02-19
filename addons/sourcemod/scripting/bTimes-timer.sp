@@ -538,7 +538,6 @@ ReplaceMessage(String:message[], maxlength)
 	}
 	else if(g_GameType == GameType_CSGO)
 	{
-		ReplaceString(message, maxlength, "^A", "\x0A");
 		ReplaceString(message, maxlength, "^1", "\x01");
 		ReplaceString(message, maxlength, "^2", "\x02");
 		ReplaceString(message, maxlength, "^3", "\x03");
@@ -547,7 +546,14 @@ ReplaceMessage(String:message[], maxlength)
 		ReplaceString(message, maxlength, "^6", "\x06");
 		ReplaceString(message, maxlength, "^7", "\x07");
 		ReplaceString(message, maxlength, "^8", "\x08");
+		ReplaceString(message, maxlength, "^9", "\x09");
+		ReplaceString(message, maxlength, "^A", "\x0A");
 		ReplaceString(message, maxlength, "^B", "\x0B");
+		ReplaceString(message, maxlength, "^C", "\x0C");
+		ReplaceString(message, maxlength, "^D", "\x0D");
+		ReplaceString(message, maxlength, "^E", "\x0E");
+		ReplaceString(message, maxlength, "^F", "\x0F");
+		ReplaceString(message, maxlength, "^0", "\x10");
 	}
 }
 
@@ -1182,10 +1188,21 @@ public Action:SM_SetStyle(client, args)
 		if(Style_IsEnabled(Style) && g_StyleConfig[Style][AllowType][TIMER_MAIN])
 		{
 			GetStyleAbbr(Style, sStyle, sizeof(sStyle));
-			
-			if(StrEqual(sCommand, sStyle))
+
+			if(GetClientTeam(client) <= 1)	
+			{	
+				if(StrEqual(sCommand, sStyle))
+				{
+					ChangeClientTeam(client, GetRandomInt(2, 3));
+					SetStyle(client, TIMER_MAIN, Style);
+				}
+			}
+			else
 			{
-				SetStyle(client, TIMER_MAIN, Style);
+				if(StrEqual(sCommand, sStyle))
+				{
+					SetStyle(client, TIMER_MAIN, Style);
+				}
 			}
 		}
 	}
@@ -1205,10 +1222,21 @@ public Action:SM_SetBonusStyle(client, args)
 		if(Style_IsEnabled(Style) && g_StyleConfig[Style][AllowType][TIMER_BONUS])
 		{
 			GetStyleAbbr(Style, sStyle, sizeof(sStyle));
-			
-			if(StrEqual(sCommand, sStyle))
+
+			if(GetClientTeam(client) <= 1)	
+			{	
+				if(StrEqual(sCommand, sStyle))
+				{
+					ChangeClientTeam(client, GetRandomInt(2, 3));
+					SetStyle(client, TIMER_BONUS, Style);
+				}
+			}
+			else
 			{
-				SetStyle(client, TIMER_BONUS, Style);
+				if(StrEqual(sCommand, sStyle))
+				{
+					SetStyle(client, TIMER_BONUS, Style);
+				}
 			}
 		}
 	}
@@ -2505,6 +2533,7 @@ CheckPrespeed(client, Style)
 {	
 	if(g_StyleConfig[Style][PreSpeed] != 0.0)
 	{
+		/*
 		new Float:fVel = GetClientVelocity(client, true, true, true);
 		
 		if(fVel > g_StyleConfig[Style][PreSpeed])
@@ -2514,6 +2543,28 @@ CheckPrespeed(client, Style)
 			ScaleVector(vVel, g_StyleConfig[Style][SlowedSpeed]/fVel);
 			TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, vVel);
 		}
+		*/
+		
+		float CurVelVec[3];
+		GetEntPropVector(client, Prop_Data, "m_vecVelocity", CurVelVec);
+	
+		if (CurVelVec[0] == 0.0)
+			CurVelVec[0] = 1.0;
+		if (CurVelVec[1] == 0.0)
+			CurVelVec[1] = 1.0;
+		if (CurVelVec[2] == 0.0)
+			CurVelVec[2] = 1.0;
+		
+		float currentspeed = SquareRoot(Pow(CurVelVec[0], 2.0) + Pow(CurVelVec[1], 2.0));
+		
+		if (currentspeed > g_StyleConfig[Style][PreSpeed])
+		{
+			NormalizeVector(CurVelVec, CurVelVec);
+			ScaleVector(CurVelVec, g_StyleConfig[Style][PreSpeed]);
+			TeleportEntity(client, NULL_VECTOR, NULL_VECTOR, CurVelVec);
+		}
+		
+		
 	}
 }
 
