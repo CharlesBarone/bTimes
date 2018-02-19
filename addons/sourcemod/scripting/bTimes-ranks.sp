@@ -279,7 +279,7 @@ public Action:Command_Say(client, const String:command[], argc)
 	}
 }
 
-public Action:OnChatMessage(&author, Handle:recipients, String:name[], String:message[])
+public Action CP_OnChatMessage(int& author, ArrayList recipients, char[] flagstring, char[] name, char[] message, bool& processcolors, bool& removecolors)
 {
 	GetChatName(author, name, MAXLENGTH_NAME);
 	GetChatMessage(author, message, MAXLENGTH_MESSAGE);

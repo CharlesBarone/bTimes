@@ -52,8 +52,6 @@ public OnPluginStart()
     SetConVar("sv_enablebunnyhopping", "1");
     SetConVar("sv_airaccelerate", "1000");
     SetConVar("sv_maxvelocity", "100000");
-    SetConVar("sv_friction", "4.2");
-    SetConVar("sv_accelerate", "5.5");
     SetConVar("sv_alltalk", "1");
     SetConVar("sv_hibernate_when_empty", "0");
     SetConVar("bot_quota_mode", "normal");
@@ -78,8 +76,6 @@ public OnConfigsExecuted()
 	SetConVar("sv_enablebunnyhopping", "1");
     SetConVar("sv_airaccelerate", "1000");
     SetConVar("sv_maxvelocity", "100000");
-    SetConVar("sv_friction", "4.2");
-    SetConVar("sv_accelerate", "5.5");
     SetConVar("sv_alltalk", "1");
     SetConVar("sv_hibernate_when_empty", "0");
     SetConVar("bot_quota_mode", "normal");
@@ -166,8 +162,6 @@ public Action:OnCvarChange(Handle:event, const String:name[], bool:dontbroadcast
         SetConVar("sv_enablebunnyhopping", "1");
     else if(StrEqual(cvar_string, "sv_maxvelocity"))
         SetConVar("sv_maxvelocity", "1000000");
-    else if(StrEqual(cvar_string, "sv_accelerate"))
-        SetConVar("sv_accelerate", "5.5");
     else if(StrEqual(cvar_string, "sv_hibernate_when_empty"))
         SetConVar("sv_hibernate_when_empty", "0")
     else if(StrEqual(cvar_string, "sv_alltalk"))
@@ -182,7 +176,5 @@ public Action:OnCvarChange(Handle:event, const String:name[], bool:dontbroadcast
         SetConVar("mp_maxrounds", "1");
     else if(StrEqual(cvar_string, "mp_autoteambalance"))
         SetConVar("mp_autoteambalance", "1");
-    else if(StrEqual(cvar_string, "sv_friction"))
-        SetConVar("sv_friction", "4.2");
     return Plugin_Handled;
 }
