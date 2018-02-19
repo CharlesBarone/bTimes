@@ -23,6 +23,9 @@ public Plugin myinfo =
 #include <cp-scp-wrapper>
 //#include <colors>
 
+#define MAXLENGTH_NAME 64
+#define MAXLENGTH_MESSAGE 256
+
 #define CC_HASCC 1<<0
 #define CC_MSGCOL 1<<1
 #define CC_NAME 1<<2
