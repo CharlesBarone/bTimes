@@ -66,7 +66,8 @@ ConVar g_hDatabaseType;
 
 public OnPluginStart()
 {	
-	g_hDatabaseType = CreateConVar("timer_database_type", "0", "1 = sqlite 0 = mysql Request server restart");
+	g_hDatabaseType = CreateConVar("timer_database_type", "0", "1 = sqlite 0 = mysql");
+	g_hDatabaseType.AddChangeHook(OnConVarChanged);
 
 	decl String:sGame[64];
 	GetGameFolderName(sGame, sizeof(sGame));
@@ -79,7 +80,7 @@ public OnPluginStart()
 		SetFailState("This timer does not support this game (%s)", sGame);
 	
 	// Database
-	DB_Connect();
+	//DB_Connect();
 	
 	// Cvars
 	if(g_GameType == GameType_CSS)
@@ -104,6 +105,24 @@ public OnPluginStart()
 	
 	// Makes FindTarget() work properly
 	LoadTranslations("common.phrases");
+}
+public void OnConVarChanged (ConVar convar, const char[] oldValue, const char[] newValue)
+{
+	if(convar == g_hDatabaseType)
+	{
+		if(StringToInt(newValue) == 1)
+		{
+			g_bSQLITE = true;
+		}else g_bSQLITE = false;	
+
+		DB_Connect();
+	}
+}
+
+public void OnConfigsExecuted()
+{
+	if(g_DB == INVALID_HANDLE)
+		DB_Connect();
 }
 
 public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
@@ -461,15 +480,11 @@ public Action:SM_Changes(client, args)
 
 DB_Connect()
 {	
-	if(g_hDatabaseType.IntValue == 1)
-	{
-		g_bSQLITE = true;
-	}else g_bSQLITE = false;
-
 	if(g_DB != INVALID_HANDLE)
 		CloseHandle(g_DB);
 	
 	char error[255];
+	
 	g_DB = SQL_Connect("timer", true, error, sizeof(error));
 	
 	if(g_DB == INVALID_HANDLE)
@@ -1119,7 +1134,7 @@ public Native_GetMapNameFromMapId(Handle:plugin, numParams)
 
 public Native_GetNameFromPlayerID(Handle:plugin, numParams)
 {
-	if(GetArraySize(g_hUser) >= GetNativeCell(1))
+	if(g_hUser != INVALID_HANDLE && GetArraySize(g_hUser) > GetNativeCell(1))
 	{
 		decl String:sName[MAX_NAME_LENGTH];
 		
@@ -1154,4 +1169,3 @@ public Native_GetMapIdFromMapName(Handle:plugin, numParams)
 		return 0;
 	}
 }
-
