@@ -60,8 +60,14 @@ new	Handle:g_hPlayerID,
 // Cvars
 new	Handle:g_hChangeLogURL;
 
+
+bool g_bSQLITE = false;
+ConVar g_hDatabaseType;
+
 public OnPluginStart()
 {	
+	g_hDatabaseType = CreateConVar("timer_database_type", "0", "1 = sqlite 0 = mysql Request server restart");
+
 	decl String:sGame[64];
 	GetGameFolderName(sGame, sizeof(sGame));
 	
@@ -455,10 +461,15 @@ public Action:SM_Changes(client, args)
 
 DB_Connect()
 {	
+	if(g_hDatabaseType.IntValue == 1)
+	{
+		g_bSQLITE = true;
+	}else g_bSQLITE = false;
+
 	if(g_DB != INVALID_HANDLE)
 		CloseHandle(g_DB);
 	
-	new String:error[255];
+	char error[255];
 	g_DB = SQL_Connect("timer", true, error, sizeof(error));
 	
 	if(g_DB == INVALID_HANDLE)
@@ -468,31 +479,32 @@ DB_Connect()
 	}
 	else
 	{
-		decl String:query[512];
+		char query[600];
 		
 		// Create maps table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS maps(MapID INTEGER AUTO_INCREMENT NOT NULL DEFAULT '0', MapName TEXT, MapPlaytime INTEGER NOT NULL DEFAULT '0', LastPlayed INTEGER NOT NULL DEFAULT '0', PRIMARY KEY (MapID))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS `maps` (`MapID` integer NOT NULL PRIMARY KEY %s,  `MapName` TEXT,  `MapPlaytime` INTEGER NOT NULL DEFAULT 0, `LastPlayed` INTEGER NOT NULL DEFAULT '0');",g_bSQLITE ? "AUTOINCREMENT" : "AUTO_INCREMENT");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
 		// Create zones table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS zones(RowID INTEGER AUTO_INCREMENT NOT NULL, MapID INTEGER, Type INTEGER, point00 REAL, point01 REAL, point02 REAL, point10 REAL, point11 REAL, point12 REAL, flags INTEGER, PRIMARY KEY (RowID))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS `zones` (`RowID` INTEGER NOT NULL PRIMARY KEY %s, `MapID` INTEGER, `Type` INTEGER,   `point00` REAL,   `point01` REAL,   `point02` REAL,   `point10` REAL,   `point11` REAL,   `point12` REAL,   `flags` INTEGER )",g_bSQLITE ? "AUTOINCREMENT" : "AUTO_INCREMENT");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
 		// Create players table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS players(PlayerID INTEGER AUTO_INCREMENT NOT NULL DEFAULT '0', SteamID TEXT, User Text, Playtime INTEGER NOT NULL DEFAULT '0', ccname TEXT, ccmsgcol TEXT, ccuse INTEGER, PRIMARY KEY (PlayerID))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS `players` (`PlayerID` INTEGER PRIMARY KEY %s, `SteamID` TEXT, `User` Text, `Playtime` INTEGER NOT NULL DEFAULT 0, `ccname` TEXT, `ccmsgcol` TEXT, `ccuse` INTEGER );",g_bSQLITE ? "AUTOINCREMENT" : "AUTO_INCREMENT");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
 		// Create times table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS times(rownum INTEGER AUTO_INCREMENT NOT NULL, MapID INTEGER, Type INTEGER, Style INTEGER, PlayerID INTEGER, Time REAL, Jumps INTEGER, Strafes INTEGER, Points REAL, Timestamp INTEGER, Sync REAL, SyncTwo REAL, PRIMARY KEY (rownum))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS `times`( `rownum` INTEGER PRIMARY KEY %s, `MapID` INTEGER DEFAULT 0, `Type` INTEGER, `Style` INTEGER, `PlayerID` INTEGER DEFAULT 0, `Time` REAL, `Jumps` INTEGER, `Strafes` INTEGER, `Points` REAL, `Timestamp` INTEGER, `Sync` REAL, `SyncTwo` REAL );",g_bSQLITE ? "AUTOINCREMENT" : "AUTO_INCREMENT");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
+		SQL_SetCharset(g_DB,"utf8mb4");
+
 		LoadPlayers();
 		LoadDatabaseMapList();
-		SQL_SetCharset(g_DB,"utf8mb4");
 	}
+
 	
 }
-
 
 public DB_Connect_Callback(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
@@ -1088,6 +1100,9 @@ public Native_GetMapNameFromMapId(Handle:plugin, numParams)
 {
 	new Index = FindValueInArray(g_hDbMapIdList, GetNativeCell(1));
 	
+	if(GetArraySize(g_hDbMapNameList) < Index)
+		return false;
+
 	if(Index != -1)
 	{
 		decl String:sMapName[64];
@@ -1104,15 +1119,15 @@ public Native_GetMapNameFromMapId(Handle:plugin, numParams)
 
 public Native_GetNameFromPlayerID(Handle:plugin, numParams)
 {
-	decl String:sName[MAX_NAME_LENGTH];
-	if(g_hUser != null && GetArraySize(g_hUser) > 0)
+	if(GetArraySize(g_hUser) >= GetNativeCell(1))
 	{
+		decl String:sName[MAX_NAME_LENGTH];
+		
 		GetArrayString(g_hUser, GetNativeCell(1), sName, sizeof(sName));
 		
 		SetNativeString(2, sName, GetNativeCell(3));
 	}
 }
-
 
 public Native_GetSteamIDFromPlayerID(Handle:plugin, numParams)
 {
@@ -1139,3 +1154,4 @@ public Native_GetMapIdFromMapName(Handle:plugin, numParams)
 		return 0;
 	}
 }
+
