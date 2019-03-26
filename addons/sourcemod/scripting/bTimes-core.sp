@@ -471,25 +471,28 @@ DB_Connect()
 		decl String:query[512];
 		
 		// Create maps table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS maps(MapID INTEGER NOT NULL AUTO_INCREMENT, MapName TEXT, MapPlaytime INTEGER NOT NULL, LastPlayed INTEGER NOT NULL, PRIMARY KEY (MapID))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS maps(MapID INTEGER AUTO_INCREMENT NOT NULL DEFAULT '0', MapName TEXT, MapPlaytime INTEGER NOT NULL DEFAULT '0', LastPlayed INTEGER NOT NULL DEFAULT '0', PRIMARY KEY (MapID))");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
 		// Create zones table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS zones(RowID INTEGER NOT NULL AUTO_INCREMENT, MapID INTEGER, Type INTEGER, point00 REAL, point01 REAL, point02 REAL, point10 REAL, point11 REAL, point12 REAL, flags INTEGER, PRIMARY KEY (RowID))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS zones(RowID INTEGER AUTO_INCREMENT NOT NULL, MapID INTEGER, Type INTEGER, point00 REAL, point01 REAL, point02 REAL, point10 REAL, point11 REAL, point12 REAL, flags INTEGER, PRIMARY KEY (RowID))");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
 		// Create players table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS players(PlayerID INTEGER NOT NULL AUTO_INCREMENT, SteamID TEXT, User Text, Playtime INTEGER NOT NULL, ccname TEXT, ccmsgcol TEXT, ccuse INTEGER, PRIMARY KEY (PlayerID))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS players(PlayerID INTEGER AUTO_INCREMENT NOT NULL DEFAULT '0', SteamID TEXT, User Text, Playtime INTEGER NOT NULL DEFAULT '0', ccname TEXT, ccmsgcol TEXT, ccuse INTEGER, PRIMARY KEY (PlayerID))");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
 		// Create times table
-		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS times(rownum INTEGER NOT NULL AUTO_INCREMENT, MapID INTEGER, Type INTEGER, Style INTEGER, PlayerID INTEGER, Time REAL, Jumps INTEGER, Strafes INTEGER, Points REAL, Timestamp INTEGER, Sync REAL, SyncTwo REAL, PRIMARY KEY (rownum))");
+		Format(query, sizeof(query), "CREATE TABLE IF NOT EXISTS times(rownum INTEGER AUTO_INCREMENT NOT NULL, MapID INTEGER, Type INTEGER, Style INTEGER, PlayerID INTEGER, Time REAL, Jumps INTEGER, Strafes INTEGER, Points REAL, Timestamp INTEGER, Sync REAL, SyncTwo REAL, PRIMARY KEY (rownum))");
 		SQL_TQuery(g_DB, DB_Connect_Callback, query);
 		
 		LoadPlayers();
 		LoadDatabaseMapList();
+		SQL_SetCharset(g_DB,"utf8mb4");
 	}
+	
 }
+
 
 public DB_Connect_Callback(Handle:owner, Handle:hndl, const String:error[], any:data)
 {
@@ -1102,11 +1105,14 @@ public Native_GetMapNameFromMapId(Handle:plugin, numParams)
 public Native_GetNameFromPlayerID(Handle:plugin, numParams)
 {
 	decl String:sName[MAX_NAME_LENGTH];
-	
-	GetArrayString(g_hUser, GetNativeCell(1), sName, sizeof(sName));
-	
-	SetNativeString(2, sName, GetNativeCell(3));
+	if(g_hUser != null && GetArraySize(g_hUser) > 0)
+	{
+		GetArrayString(g_hUser, GetNativeCell(1), sName, sizeof(sName));
+		
+		SetNativeString(2, sName, GetNativeCell(3));
+	}
 }
+
 
 public Native_GetSteamIDFromPlayerID(Handle:plugin, numParams)
 {
